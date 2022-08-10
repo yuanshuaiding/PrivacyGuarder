@@ -1,0 +1,130 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.eric.gradle.plugin.privacy",
+    "module": "privacyPlugin",
+    "version": "1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.3.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.7.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "privacyPlugin-1.0.jar",
+          "url": "privacyPlugin-1.0.jar",
+          "size": 17697,
+          "sha512": "8eda6baf073a70430ecc391091e7c214ef2dbcfd52d77d31363dd11d8c9f0b3e9776e32c8c5df3acd0a3ded4c22a752e82dde36829384e0d47975577e51b831a",
+          "sha256": "d5559a95a1d2a1ec034c12434909ffb551d0e84f6b177d4487eaa4e2d86af883",
+          "sha1": "267fe181fd39acd99cd392643242900ed658f211",
+          "md5": "64ab1633b425c70acb6982d6621a2134"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.ow2.asm",
+          "module": "asm",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-commons",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-analysis",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-util",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-tree",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "7.2.1"
+          },
+          "excludes": [
+            {
+              "group": "org.ow2.asm",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.7.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "privacyPlugin-1.0.jar",
+          "url": "privacyPlugin-1.0.jar",
+          "size": 17697,
+          "sha512": "8eda6baf073a70430ecc391091e7c214ef2dbcfd52d77d31363dd11d8c9f0b3e9776e32c8c5df3acd0a3ded4c22a752e82dde36829384e0d47975577e51b831a",
+          "sha256": "d5559a95a1d2a1ec034c12434909ffb551d0e84f6b177d4487eaa4e2d86af883",
+          "sha1": "267fe181fd39acd99cd392643242900ed658f211",
+          "md5": "64ab1633b425c70acb6982d6621a2134"
+        }
+      ]
+    }
+  ]
+}

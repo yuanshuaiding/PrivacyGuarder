@@ -1,0 +1,29 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        //本地maven仓库，这里用来存放privacyPlugin插件，方便调试
+        maven {
+            url "maven-repo"
+        }
+    }
+}
+dependencyResolutionManagement {
+    //问题
+    //Build was configured to prefer settings repositories over project repositories but repository ‘Gradle Libs’ was added by unknown code
+    //解决
+    //settings.gradle中，注释掉repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    //repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://jitpack.io"
+        }
+    }
+}
+rootProject.name = "PrivacyGuarder"
+include ':app'
+include ':privacyPlugin'
+include ':privacyAnnotation'
