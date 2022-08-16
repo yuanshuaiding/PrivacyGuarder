@@ -4,6 +4,7 @@
     package="com.eric.manager.privacy">
 
     <application
+        android:name=".app.MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

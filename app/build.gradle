@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     //应用自定义隐私治理插件
-    id 'privacyGovernPlugin'
+    id 'privacyPlugin'
 }
 
 //隐私治理插件配置
@@ -38,6 +38,11 @@ android {
         jvmTarget = '1.8'
     }
 
+    buildFeatures {
+        //项目使用viewBinding
+        viewBinding true
+    }
+
     lint {
         baseline = file("lint-baseline.xml")
     }
@@ -45,11 +50,12 @@ android {
 
 dependencies {
 
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation(project(':privacyAnnotation'))
+    implementation project(':privacyAnnotation')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

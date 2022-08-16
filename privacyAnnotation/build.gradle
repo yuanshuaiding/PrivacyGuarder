@@ -1,9 +1,32 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
+    //用于发布至maven仓库的插件
+    id 'maven-publish'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+//插件发布(gradle 7.x后使用下面的方式发布插件)
+group = 'com.eric.manager.privacy'
+version = '1.0'
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifactId = 'privacyAnnotation'
+                from components.java
+            }
+        }
+
+        repositories {
+            maven {
+                url = uri('../maven-repo')
+            }
+        }
+    }
 }

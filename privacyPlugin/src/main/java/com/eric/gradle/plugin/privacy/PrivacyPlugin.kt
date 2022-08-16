@@ -5,6 +5,7 @@ import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.eric.gradle.plugin.privacy.config.PrivacyConfig
 import com.eric.gradle.plugin.privacy.transformFactory.MethodTimeCostTransformFactory
+import com.eric.gradle.plugin.privacy.transformFactory.PrivacyAOPContractFactory
 import com.eric.gradle.plugin.privacy.transformFactory.PrivacyAOPTransformFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -23,9 +24,6 @@ class PrivacyPlugin : Plugin<Project> {
     companion object {
         //拓展配置名称
         const val PRIVACY_PLUGIN_CONFIG_EXT = "privacyConfig"
-
-        //全局记录的包名
-        var APPPKG = ""
     }
 
     override fun apply(project: Project) {
@@ -42,7 +40,7 @@ class PrivacyPlugin : Plugin<Project> {
         project.extensions.create(PRIVACY_PLUGIN_CONFIG_EXT, PrivacyConfig::class.java)
 
         //获取配置(afterEvaluate是gradle配置阶段完成以后的回调)
-        project.afterEvaluate {
+        //project.afterEvaluate {
             //config = p.extensions.findByType(PrivacyConfig::class.java)
             //println("############################合规治理配置清单 start#########################")
             //println("此次编译privacyGovernPlugin是否生效：${config?.apply}")
@@ -58,7 +56,7 @@ class PrivacyPlugin : Plugin<Project> {
             //android.registerTransform(PrivacyScanTransform(p))
             // 执行字节码替换的任务
             //android.registerTransform(PrivacySentryTransform(p))
-        }
+        //}
 
         //使用新的API进行transform
         val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
@@ -84,19 +82,24 @@ class PrivacyPlugin : Plugin<Project> {
             } else {
                 println("${project.name}合规治理插件开关已关闭，字节码修改进行中...")
                 //开始注册transform操作字节码
-                //1. 方法耗时transform
+                //测试用： 方法耗时transform
                 variant.instrumentation.transformClassesWith(
                     MethodTimeCostTransformFactory::class.java,
                     InstrumentationScope.PROJECT
                 ) {}
 
-                //2. 隐私API代理transform
+                //1. 隐私API替换类解析，用于生成需要替换的隐私API与代理API之间的映射关系(此处的解析范围仅限为自己的项目)
                 variant.instrumentation.transformClassesWith(
-                    PrivacyAOPTransformFactory::class.java,
-                    InstrumentationScope.ALL
-                ) { params ->
-
-                }
+                    PrivacyAOPContractFactory::class.java,
+                    InstrumentationScope.PROJECT
+                ) { }
+                //2. 隐私API替换，根据第1步生成的映射关系，发现匹配的隐私方法、属性调用时使用代理API进行AOP
+//                variant.instrumentation.transformClassesWith(
+//                    PrivacyAOPTransformFactory::class.java,
+//                    InstrumentationScope.ALL
+//                ) { params ->
+//
+//                }
                 //设置栈帧计算模式
                 variant.instrumentation.setAsmFramesComputationMode(
                     FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS

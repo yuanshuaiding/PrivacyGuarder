@@ -22,7 +22,6 @@ abstract class MethodTimeCostTransformFactory :
         classContext: ClassContext,
         nextClassVisitor: ClassVisitor
     ): ClassVisitor {
-        parameters
         return MethodTimeCostVisitor(nextClassVisitor,classContext.currentClassData.className)
     }
 

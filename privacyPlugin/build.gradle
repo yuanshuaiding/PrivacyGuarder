@@ -16,7 +16,7 @@ java {
 gradlePlugin {
     plugins {
         modularPlugin {
-            id = 'privacyGovernPlugin'
+            id = 'privacyPlugin'
             implementationClass = 'com.eric.gradle.plugin.privacy.PrivacyPlugin'
         }
     }
@@ -50,7 +50,7 @@ dependencies {
     implementation 'org.ow2.asm:asm-util:9.3'
     implementation 'org.ow2.asm:asm-tree:9.3'
 
-    implementation(project(':privacyAnnotation'))
+    implementation project(':privacyAnnotation')
     // AGP 7.2.1
     implementation("com.android.tools.build:gradle:7.2.1") {
         //防止与其他第三方库中的asm版本冲突
