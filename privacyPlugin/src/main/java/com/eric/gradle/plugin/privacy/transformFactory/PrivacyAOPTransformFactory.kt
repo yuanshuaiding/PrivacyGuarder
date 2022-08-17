@@ -4,12 +4,12 @@ import com.android.build.api.instrumentation.AsmClassVisitorFactory
 import com.android.build.api.instrumentation.ClassContext
 import com.android.build.api.instrumentation.ClassData
 import com.android.build.api.instrumentation.InstrumentationParameters
+import com.eric.gradle.plugin.privacy.config.AOPHelper
+import com.eric.manager.privacy.annotation.PrivacyProxyClass
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes
+import org.objectweb.asm.*
 import org.objectweb.asm.commons.AdviceAdapter
 
 /**
@@ -48,17 +48,61 @@ abstract class PrivacyAOPTransformFactory : AsmClassVisitorFactory<PrivacyAOPPar
     /**
      * 判断哪些类需要应用AOP，比如忽略名单里的就不需要
      */
-    override fun isInstrumentable(classData: ClassData) = true
+    override fun isInstrumentable(classData: ClassData): Boolean {
+        val className = classData.className.replace("/", ".")
+        //如果在忽略名单里，则不参与AOP
+        if (parameters.get().ignoredPKG.get().find {
+                className.contains(it)
+            } != null) {
+            return false
+        }
+        //使用了PrivacyProxyClass注解的类（即AOP规则类），这个类已经处理了隐私合规问题
+        val classAnn = classData.classAnnotations
+        if (classAnn.find {
+                it =="com.eric.manager.privacy.annotation.PrivacyProxyClass"
+            } != null) {
+            return false
+        }
+        //一些已知不会调用隐私API的库也不需要AOP，如自动生成的R类，Android官方库等（org.intellij.lang.annotations.Subst）
+        if (className.endsWith(".R")
+            || className.endsWith(".BuildConfig")
+            || className.contains("android.support.")
+            || className.contains("android.arch.")
+            || className.contains("android.app.")
+            || className.contains("android.material")
+            || className.startsWith("androidx.")
+            //kotlin相关库
+            || className.startsWith("kotlin.")
+            // 当前库本身(注解库，其他辅助工具库)
+            || className.contains("com.eric.manager.privacy.annotation")
+        ) {
+            return false
+        }
+        return true
+    }
 }
 
+
 /**
- * 有两种主要方式访问系统隐私API：直接访问系统隐私属性，如：
- *  var
- *
+ * 有两种主要方式访问系统隐私API：
+ * 1.直接访问系统隐私属性，如：
+ *  val sn=Build.SERIAL
+ * 2.访问系统隐私方法，如：
+ *  val sn=Build.getSerial()
  */
 private class PrivacyAOPVisitor(classVisitor: ClassVisitor) :
     ClassVisitor(Opcodes.ASM9, classVisitor) {
     //TODO 目前只处理方法体里出现的隐私API调用，其实属性也有可能，如在类的成员属性声明时直接赋值 val sn=Build.getSerial()，但这个比较少见，不花精力处理了
+    override fun visitField(
+        access: Int,
+        name: String?,
+        descriptor: String?,
+        signature: String?,
+        value: Any?
+    ): FieldVisitor {
+        return super.visitField(access, name, descriptor, signature, value)
+    }
+
     override fun visitMethod(
         access: Int,
         name: String?,
@@ -70,7 +114,41 @@ private class PrivacyAOPVisitor(classVisitor: ClassVisitor) :
         val methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
         //使用原始methodVisitor构造新的methodVisitor，并完成AOP操作，此处使用AdviceAdapter是因为它是MethodVisitor的子类并做了进一步封装，使用起来更简单
         return object : AdviceAdapter(api, methodVisitor, access, name, descriptor) {
+            //方法体内的方法方法指令（对应java代码里某一行方法调用代码）
+            override fun visitMethodInsn(
+                opcodeAndSource: Int,
+                owner: String?,
+                name: String?,
+                descriptor: String?,
+                isInterface: Boolean
+            ) {
+                //从收集到的AOP映射列表里取出对应项
+                val aopBean=AOPHelper.find(owner,name,descriptor)
+                if(aopBean!=null){
+                    //找到匹配的AOP项后，进行字节码替换(注意为了方便使用，代理方法为静态方法，所以这里opcode写死了INVOKESTATIC)
+                    mv.visitMethodInsn(
+                        INVOKESTATIC,
+                        aopBean.proxyClass,
+                        aopBean.proxyMethod,
+                        aopBean.proxyMethodDescriptor,
+                        false
+                    )
 
+                    //todo 将AOP结果保留，全部替换完后输出到指定文件
+
+                    return
+                }
+                super.visitMethodInsn(opcodeAndSource, owner, name, descriptor, isInterface)
+            }
+            //方法体内变量访问指令（对应java代码里某一行变量调用代码）
+            override fun visitFieldInsn(
+                opcode: Int,
+                owner: String?,
+                name: String?,
+                descriptor: String?
+            ) {
+                super.visitFieldInsn(opcode, owner, name, descriptor)
+            }
 
         }
     }

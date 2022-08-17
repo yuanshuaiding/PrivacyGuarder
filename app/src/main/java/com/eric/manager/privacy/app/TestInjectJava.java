@@ -3,18 +3,26 @@ package com.eric.manager.privacy.app;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Description: 测试AOP
+ * @Description: java版本：测试AOP替换隐私API
  * @Author: Eric
  * @Email: yuanshuaiding@163.com
  * @CreateDate: 2022/7/28 11:41
  * @Version: 1.0
  */
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class TestInjectJava {
+
+    //直接在声明成员变量时获取隐私数据
+    String sn= Build.getSerial();
+
     public static List<AppInfo> getAppsInfo(Context context) {
         ArrayList<AppInfo> list = new ArrayList<>();
 
@@ -37,7 +45,7 @@ public class TestInjectJava {
         return list;
     }
 
-    private static AppInfo getBean(PackageInfo pi) {
+    public static AppInfo getBean(PackageInfo pi) {
         if (pi == null) {
             return null;
         } else {

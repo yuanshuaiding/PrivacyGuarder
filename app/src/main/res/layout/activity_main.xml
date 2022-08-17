@@ -17,12 +17,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-
         android:id="@+id/btnAppList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="获取应用列表"
+        android:text="获取应用列表(JAVA)"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnAppList2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="获取应用列表(Kotlin)"
+        app:layout_constraintTop_toBottomOf="@+id/btnAppList"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

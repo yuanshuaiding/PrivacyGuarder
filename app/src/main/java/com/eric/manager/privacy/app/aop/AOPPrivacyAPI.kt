@@ -2,6 +2,7 @@ package com.eric.manager.privacy.app.aop
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import com.eric.manager.privacy.annotation.PrivacyMethodOpcode
 import com.eric.manager.privacy.annotation.PrivacyProxyClass
 import com.eric.manager.privacy.annotation.PrivacyProxyMethod
@@ -27,5 +28,23 @@ object AOPPrivacyAPI {
             return emptyList()
         }
         return packageManager.getInstalledPackages(flage)
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = Build::class,
+        targetMethod = "getSerial",
+        targetMethodOpcode = PrivacyMethodOpcode.INVOKESTATIC
+    )
+    @JvmStatic
+    fun getSerial(): String {
+        if (!PrivacyUtil.isAgreed()) {
+            return ""
+        }
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Build.getSerial()
+        } else {
+            Build.SERIAL
+        }
     }
 }

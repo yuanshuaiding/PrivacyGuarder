@@ -8,6 +8,7 @@ plugins {
 //隐私治理插件配置
 privacyConfig {
     apply = true
+    ignorePKG = ["com.amap.api"]
     forbidden = ["api1", "api2"]
 }
 
@@ -20,16 +21,44 @@ android {
         targetSdk 32
         versionCode 1
         versionName "1.0"
-
+        flavorDimensions.add("app")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    signingConfigs {
         release {
-            minifyEnabled false
+            storeFile file("app.keystore")
+            storePassword "000000"
+            keyAlias "eric"
+            keyPassword "000000"
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            signingConfig signingConfigs.release
+        }
+        release {
+            debuggable true
+            jniDebuggable false
+            shrinkResources false
+            minifyEnabled true
+            signingConfig signingConfigs.release
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors {
+        develope {
+
+        }
+        product {
+
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

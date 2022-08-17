@@ -38,11 +38,11 @@
         {
           "name": "privacyPlugin-1.0.jar",
           "url": "privacyPlugin-1.0.jar",
-          "size": 31969,
-          "sha512": "3e94e60dc4eef57b699fca40e87ef49e4299f4562aa7a3b3d5d00f7271c242c1bf6885d2c1b05da9943011feab9da4a05be9e245599e22d385de08e733892476",
-          "sha256": "b9b02102c6ecf53e01996ba229277bb2cfec4e94099343fe9fc13f98b08339f9",
-          "sha1": "56008fc44a76deb95f782a7d116ce0425f3bf83a",
-          "md5": "b4d4f3390d7a156c342acb234b5cf238"
+          "size": 37714,
+          "sha512": "547d9f6ca40b7346f4b4e3ca297c04cf9422a7dacf5afa6242e4fb60373f94e00622ca32ca43e2c836fe2e1e17d52c5ee5c2637e597f25288b4595a341e4b798",
+          "sha256": "0f5db4f4708013aa363310b54f884692a94e21bcfaa6a745ade0cffc8cd27542",
+          "sha1": "a2b50ac79b0e1106cce613322deeaeaae953524e",
+          "md5": "33d68121f45fd2311aa2bf48617a3632"
         }
       ]
     },
@@ -125,11 +125,11 @@
         {
           "name": "privacyPlugin-1.0.jar",
           "url": "privacyPlugin-1.0.jar",
-          "size": 31969,
-          "sha512": "3e94e60dc4eef57b699fca40e87ef49e4299f4562aa7a3b3d5d00f7271c242c1bf6885d2c1b05da9943011feab9da4a05be9e245599e22d385de08e733892476",
-          "sha256": "b9b02102c6ecf53e01996ba229277bb2cfec4e94099343fe9fc13f98b08339f9",
-          "sha1": "56008fc44a76deb95f782a7d116ce0425f3bf83a",
-          "md5": "b4d4f3390d7a156c342acb234b5cf238"
+          "size": 37714,
+          "sha512": "547d9f6ca40b7346f4b4e3ca297c04cf9422a7dacf5afa6242e4fb60373f94e00622ca32ca43e2c836fe2e1e17d52c5ee5c2637e597f25288b4595a341e4b798",
+          "sha256": "0f5db4f4708013aa363310b54f884692a94e21bcfaa6a745ade0cffc8cd27542",
+          "sha1": "a2b50ac79b0e1106cce613322deeaeaae953524e",
+          "md5": "33d68121f45fd2311aa2bf48617a3632"
         }
       ]
     }

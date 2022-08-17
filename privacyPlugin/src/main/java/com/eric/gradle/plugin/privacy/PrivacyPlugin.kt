@@ -41,21 +41,21 @@ class PrivacyPlugin : Plugin<Project> {
 
         //获取配置(afterEvaluate是gradle配置阶段完成以后的回调)
         //project.afterEvaluate {
-            //config = p.extensions.findByType(PrivacyConfig::class.java)
-            //println("############################合规治理配置清单 start#########################")
-            //println("此次编译privacyGovernPlugin是否生效：${config?.apply}")
-            //println("永久禁用的隐私API：")
-            //config?.forbidden?.forEach { api ->
-            //    println(api)
-            //}
-            //println("############################合规治理配置清单   end#########################")
+        //config = p.extensions.findByType(PrivacyConfig::class.java)
+        //println("############################合规治理配置清单 start#########################")
+        //println("此次编译privacyGovernPlugin是否生效：${config?.apply}")
+        //println("永久禁用的隐私API：")
+        //config?.forbidden?.forEach { api ->
+        //    println(api)
+        //}
+        //println("############################合规治理配置清单   end#########################")
 
 
-            //val android = p.extensions.getByType(AppExtension::class.java)
-            // 收集注解信息的任务(APG7.x后已不推荐使用transform，从 AGP 8.0 开始，Transform API 将被移除。这意味着，软件包 com.android.build.api.transform 中的所有类都会被移除。如需转换字节码，请使用 Instrumentation API。)
-            //android.registerTransform(PrivacyScanTransform(p))
-            // 执行字节码替换的任务
-            //android.registerTransform(PrivacySentryTransform(p))
+        //val android = p.extensions.getByType(AppExtension::class.java)
+        // 收集注解信息的任务(APG7.x后已不推荐使用transform，从 AGP 8.0 开始，Transform API 将被移除。这意味着，软件包 com.android.build.api.transform 中的所有类都会被移除。如需转换字节码，请使用 Instrumentation API。)
+        //android.registerTransform(PrivacyScanTransform(p))
+        // 执行字节码替换的任务
+        //android.registerTransform(PrivacySentryTransform(p))
         //}
 
         //使用新的API进行transform
@@ -73,14 +73,18 @@ class PrivacyPlugin : Plugin<Project> {
             }
         }
 
-        androidComponents.onVariants { variant ->
+        androidComponents.onVariants(
+            // 为了加快debug构建速度，应该只对release版本生效
+            androidComponents.selector().withBuildType("release")
+        ) { variant ->
             println("构建变体名称:" + variant.name)
-            // TODO: 为了加快debug构建速度，应该只对release版本生效
+            println("构建变体BuildType:" + variant.buildType)
+
             if (config?.apply != true) {
                 println("${project.name}合规治理插件开关已关闭，字节码修改失效")
                 return@onVariants
             } else {
-                println("${project.name}合规治理插件开关已关闭，字节码修改进行中...")
+                println("${project.name}合规治理插件开关已开启，字节码修改进行中...")
                 //开始注册transform操作字节码
                 //测试用： 方法耗时transform
                 variant.instrumentation.transformClassesWith(
@@ -94,18 +98,36 @@ class PrivacyPlugin : Plugin<Project> {
                     InstrumentationScope.PROJECT
                 ) { }
                 //2. 隐私API替换，根据第1步生成的映射关系，发现匹配的隐私方法、属性调用时使用代理API进行AOP
-//                variant.instrumentation.transformClassesWith(
-//                    PrivacyAOPTransformFactory::class.java,
-//                    InstrumentationScope.ALL
-//                ) { params ->
-//
-//                }
+                variant.instrumentation.transformClassesWith(
+                    PrivacyAOPTransformFactory::class.java,
+                    InstrumentationScope.ALL
+                ) { params ->
+                    //获取忽略的包名
+                    config?.let {
+                        it.ignorePKG?.forEach { pkg ->
+                            params.ignoredPKG.add(pkg)
+                        }
+                        it.forbidden?.forEach { api ->
+                            params.forbiddenAPI.add(api)
+
+                        }
+                        params.outFile.set(it.outFile)
+                    }
+
+                }
                 //设置栈帧计算模式
                 variant.instrumentation.setAsmFramesComputationMode(
                     FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS
                 )
+
             }
-            println("${project.name}合规治理插件开关已关闭，字节码修改完成")
+        }
+
+        project.gradle.buildFinished {
+            if (config?.apply == true) {
+                println("${project.name}合规治理插件字节码修改完成")
+                println("请在项目根目录${config?.outFile}.json文件中查看AOP结果")
+            }
         }
     }
 }

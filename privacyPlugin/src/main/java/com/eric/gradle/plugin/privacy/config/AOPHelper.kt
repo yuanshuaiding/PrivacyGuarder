@@ -8,5 +8,38 @@ package com.eric.gradle.plugin.privacy.config
  * @Version: 1.0
  */
 object AOPHelper {
+
     val aopMethodBeans = mutableListOf<AOPMethodBean>()
+
+
+    fun find(ownerClass: String?, methodName: String?, descriptor: String?): AOPMethodBean? {
+        if (methodName == "") {
+            return null
+        }
+
+        return aopMethodBeans.find {
+            isAOPItem(it, methodName ?: "", ownerClass ?: "", descriptor ?: "")
+        }
+    }
+
+    private fun isAOPItem(
+        aopItem: AOPMethodBean,
+        methodName: String,
+        classOwnerName: String = "",
+        methodDesc: String = ""
+    ): Boolean {
+        if (methodName.isEmpty()) {
+            return false
+        }
+        return if (classOwnerName.isEmpty() && methodDesc.isNotEmpty()) {
+            methodName == aopItem.targetMethod && methodDesc == aopItem.targetMethodDescriptor
+        } else if (classOwnerName.isNotEmpty() && methodDesc.isEmpty()) {
+            methodName == aopItem.targetMethod && classOwnerName == aopItem.targetClass
+        } else if (classOwnerName.isNotEmpty() && methodDesc.isNotEmpty()) {
+            methodName == aopItem.targetMethod && classOwnerName == aopItem.targetClass && methodDesc == aopItem.targetMethodDescriptor
+        } else {
+            methodName == aopItem.targetMethod
+        }
+    }
+
 }
