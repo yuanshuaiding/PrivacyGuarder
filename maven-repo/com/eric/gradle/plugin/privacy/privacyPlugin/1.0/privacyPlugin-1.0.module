@@ -38,11 +38,11 @@
         {
           "name": "privacyPlugin-1.0.jar",
           "url": "privacyPlugin-1.0.jar",
-          "size": 37714,
-          "sha512": "547d9f6ca40b7346f4b4e3ca297c04cf9422a7dacf5afa6242e4fb60373f94e00622ca32ca43e2c836fe2e1e17d52c5ee5c2637e597f25288b4595a341e4b798",
-          "sha256": "0f5db4f4708013aa363310b54f884692a94e21bcfaa6a745ade0cffc8cd27542",
-          "sha1": "a2b50ac79b0e1106cce613322deeaeaae953524e",
-          "md5": "33d68121f45fd2311aa2bf48617a3632"
+          "size": 45611,
+          "sha512": "f08348068a223377812f4ae0f87e59edfdc7c38bdf49165a929aaafb7d306dd15e878c582e713af39794240bac8d9110ace18a0b8ccb1c3901252b22a0db48e9",
+          "sha256": "4547967c8e5ef8ad258a8cb17971a2f361510c7baa97b97c11e2cd09708d8028",
+          "sha1": "1356ea586380055493f3a22ef5eacd3f5978da90",
+          "md5": "aaa343c4b7495b78e9abec74c742523a"
         }
       ]
     },
@@ -94,6 +94,20 @@
           }
         },
         {
+          "group": "commons-io",
+          "module": "commons-io",
+          "version": {
+            "requires": "2.11.0"
+          }
+        },
+        {
+          "group": "com.google.code.gson",
+          "module": "gson",
+          "version": {
+            "requires": "2.8.9"
+          }
+        },
+        {
           "group": "com.eric.manager.privacy",
           "module": "privacyAnnotation",
           "version": {
@@ -125,11 +139,11 @@
         {
           "name": "privacyPlugin-1.0.jar",
           "url": "privacyPlugin-1.0.jar",
-          "size": 37714,
-          "sha512": "547d9f6ca40b7346f4b4e3ca297c04cf9422a7dacf5afa6242e4fb60373f94e00622ca32ca43e2c836fe2e1e17d52c5ee5c2637e597f25288b4595a341e4b798",
-          "sha256": "0f5db4f4708013aa363310b54f884692a94e21bcfaa6a745ade0cffc8cd27542",
-          "sha1": "a2b50ac79b0e1106cce613322deeaeaae953524e",
-          "md5": "33d68121f45fd2311aa2bf48617a3632"
+          "size": 45611,
+          "sha512": "f08348068a223377812f4ae0f87e59edfdc7c38bdf49165a929aaafb7d306dd15e878c582e713af39794240bac8d9110ace18a0b8ccb1c3901252b22a0db48e9",
+          "sha256": "4547967c8e5ef8ad258a8cb17971a2f361510c7baa97b97c11e2cd09708d8028",
+          "sha1": "1356ea586380055493f3a22ef5eacd3f5978da90",
+          "md5": "aaa343c4b7495b78e9abec74c742523a"
         }
       ]
     }

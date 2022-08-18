@@ -7,7 +7,7 @@ package com.eric.manager.privacy.annotation
  * @CreateDate: 2022/8/16 15:07
  * @Version: 1.0
  */
-enum class PrivacyMethodOpcode(val opcode: Int) {
+enum class PrivacyOpcode(val opcode: Int) {
     /**
      * ASM框架定义的JVM方法和属性访问类型有如下几种，详见org.objectweb.asm.Opcodes类：
      *

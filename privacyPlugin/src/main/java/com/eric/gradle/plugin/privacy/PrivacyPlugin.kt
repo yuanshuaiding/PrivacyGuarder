@@ -3,12 +3,16 @@ package com.eric.gradle.plugin.privacy
 import com.android.build.api.instrumentation.FramesComputationMode
 import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.eric.gradle.plugin.privacy.config.AOPHelper
 import com.eric.gradle.plugin.privacy.config.PrivacyConfig
-import com.eric.gradle.plugin.privacy.transformFactory.MethodTimeCostTransformFactory
 import com.eric.gradle.plugin.privacy.transformFactory.PrivacyAOPContractFactory
 import com.eric.gradle.plugin.privacy.transformFactory.PrivacyAOPTransformFactory
+import com.google.gson.GsonBuilder
+import org.apache.commons.io.FileUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.io.File
+import java.nio.charset.Charset
 
 /**
  * @Description: 合规治理插件：借助asm框架，对字节码文件中涉及的隐私api进行代理，并提供配置，对指定隐私api永久关闭调用
@@ -53,9 +57,9 @@ class PrivacyPlugin : Plugin<Project> {
 
         //val android = p.extensions.getByType(AppExtension::class.java)
         // 收集注解信息的任务(APG7.x后已不推荐使用transform，从 AGP 8.0 开始，Transform API 将被移除。这意味着，软件包 com.android.build.api.transform 中的所有类都会被移除。如需转换字节码，请使用 Instrumentation API。)
-        //android.registerTransform(PrivacyScanTransform(p))
+        //android.registerTransform(PrivacyContractTransform(p))
         // 执行字节码替换的任务
-        //android.registerTransform(PrivacySentryTransform(p))
+        //android.registerTransform(PrivacyAOPTransform(p))
         //}
 
         //使用新的API进行transform
@@ -74,8 +78,8 @@ class PrivacyPlugin : Plugin<Project> {
         }
 
         androidComponents.onVariants(
-            // 为了加快debug构建速度，应该只对release版本生效
-            androidComponents.selector().withBuildType("release")
+            // 要想不影响开发阶段，可选择只对release版本生效，或config.apply=false
+            //androidComponents.selector().withBuildType("release")
         ) { variant ->
             println("构建变体名称:" + variant.name)
             println("构建变体BuildType:" + variant.buildType)
@@ -85,14 +89,10 @@ class PrivacyPlugin : Plugin<Project> {
                 return@onVariants
             } else {
                 println("${project.name}合规治理插件开关已开启，字节码修改进行中...")
-                //开始注册transform操作字节码
-                //测试用： 方法耗时transform
-                variant.instrumentation.transformClassesWith(
-                    MethodTimeCostTransformFactory::class.java,
-                    InstrumentationScope.PROJECT
-                ) {}
 
-                //1. 隐私API替换类解析，用于生成需要替换的隐私API与代理API之间的映射关系(此处的解析范围仅限为自己的项目)
+                //开始注册transform操作字节码
+
+                //1. 隐私API替换规则类解析，用于生成需要替换的隐私API与代理API之间的映射关系(此处的解析范围仅限为自己的项目，你需要在自己的项目中使用注解定义好替换规则类)
                 variant.instrumentation.transformClassesWith(
                     PrivacyAOPContractFactory::class.java,
                     InstrumentationScope.PROJECT
@@ -102,15 +102,17 @@ class PrivacyPlugin : Plugin<Project> {
                     PrivacyAOPTransformFactory::class.java,
                     InstrumentationScope.ALL
                 ) { params ->
-                    //获取忽略的包名
                     config?.let {
+                        //从配置中获取忽略的包名
                         it.ignorePKG?.forEach { pkg ->
                             params.ignoredPKG.add(pkg)
                         }
+                        //从配置中获取永久禁用API
                         it.forbidden?.forEach { api ->
                             params.forbiddenAPI.add(api)
 
                         }
+                        //从配置中获取AOP结果文件名
                         params.outFile.set(it.outFile)
                     }
 
@@ -124,10 +126,47 @@ class PrivacyPlugin : Plugin<Project> {
         }
 
         project.gradle.buildFinished {
+            //3.输出AOP结果
             if (config?.apply == true) {
                 println("${project.name}合规治理插件字节码修改完成")
-                println("请在项目根目录${config?.outFile}.json文件中查看AOP结果")
+                config?.outFile?.let {
+                    println("正在生成AOP结果...")
+                    writeResultFile(project, "$it.json").run {
+                        println("请在${this}文件中查看AOP结果")
+                    }
+                }
+
             }
         }
+    }
+
+    //将AOP结果保存到app的build目录里
+    private fun writeResultFile(project: Project, fileName: String): String {
+        if (fileName.isEmpty() || AOPHelper.aopMethodResultBeans.isEmpty()) return ""
+        try {
+            val resultFile = File(project.buildDir.absolutePath + File.separator + fileName)
+            if (resultFile.parentFile != null && !resultFile.parentFile.exists()) {
+                FileUtils.forceMkdirParent(resultFile)
+            }
+
+            resultFile.let {
+                FileUtils.deleteQuietly(resultFile)
+            }
+            val gson = GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create()
+            val result =
+                """
+                隐私属性AOP结果：
+                ${gson.toJson(AOPHelper.aopFieldResultBeans)}
+                
+                隐私方法AOP结果：
+                ${gson.toJson(AOPHelper.aopMethodResultBeans)}
+                
+                """
+            FileUtils.write(resultFile, result, Charset.forName("UTF-8"))
+            return resultFile.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return ""
     }
 }

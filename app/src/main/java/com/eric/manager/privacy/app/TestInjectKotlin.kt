@@ -14,6 +14,19 @@ import com.eric.manager.privacy.app.TestInjectJava.AppInfo
  */
 class TestInjectKotlin {
 
+    companion object{
+        //直接在声明成员变量时访问隐私属性且为静态类型
+        var sn3 = Build.SERIAL
+    }
+
+    //直接在声明成员变量时调用隐私API
+    @RequiresApi(Build.VERSION_CODES.O)
+    var sn1 = Build.getSerial()
+
+    //直接在声明成员变量时访问隐私属性
+    var sn2 = Build.SERIAL
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun getAppsInfo(context: Context): List<AppInfo>? {
         val list = ArrayList<AppInfo>()

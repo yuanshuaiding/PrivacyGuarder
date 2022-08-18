@@ -38,11 +38,11 @@
         {
           "name": "privacyAnnotation-1.0.jar",
           "url": "privacyAnnotation-1.0.jar",
-          "size": 4267,
-          "sha512": "941fa6d85b58219d9db6680b243dafb26c51bf6bab388d49b0932a8dac20b41f5f4a88d9c0301bfd1f139ea7b180a97e565464a3958cc7740dc4274da874c9fb",
-          "sha256": "85daa2aa18e034a485fd5d50f2a4a4227929e2ddf462f695870be0368e9611d4",
-          "sha1": "0821a8bada6bf2a1f1bd35fb2aca81b52bbf0d70",
-          "md5": "8a5d5765795a0e4701ec886895fc10c7"
+          "size": 5066,
+          "sha512": "0ded3b2e524529a26d22b618d4c2e8959f533efa1ae0591396c4d9d30ac91abfc83347127d239ae3f15f9c03af6376d8a2d8184d0db17189d7de9031b3b35720",
+          "sha256": "9391e3f99bbbcec44ae06f533a94fd4f265c39dd01d27f701b7ae48683537fbf",
+          "sha1": "10d01e6fb409ed3779305c6390151ae708960f03",
+          "md5": "5181ae276557758f970fb67ca3a01f14"
         }
       ]
     },
@@ -70,11 +70,11 @@
         {
           "name": "privacyAnnotation-1.0.jar",
           "url": "privacyAnnotation-1.0.jar",
-          "size": 4267,
-          "sha512": "941fa6d85b58219d9db6680b243dafb26c51bf6bab388d49b0932a8dac20b41f5f4a88d9c0301bfd1f139ea7b180a97e565464a3958cc7740dc4274da874c9fb",
-          "sha256": "85daa2aa18e034a485fd5d50f2a4a4227929e2ddf462f695870be0368e9611d4",
-          "sha1": "0821a8bada6bf2a1f1bd35fb2aca81b52bbf0d70",
-          "md5": "8a5d5765795a0e4701ec886895fc10c7"
+          "size": 5066,
+          "sha512": "0ded3b2e524529a26d22b618d4c2e8959f533efa1ae0591396c4d9d30ac91abfc83347127d239ae3f15f9c03af6376d8a2d8184d0db17189d7de9031b3b35720",
+          "sha256": "9391e3f99bbbcec44ae06f533a94fd4f265c39dd01d27f701b7ae48683537fbf",
+          "sha1": "10d01e6fb409ed3779305c6390151ae708960f03",
+          "md5": "5181ae276557758f970fb67ca3a01f14"
         }
       ]
     }

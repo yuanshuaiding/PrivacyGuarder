@@ -1,5 +1,10 @@
 package com.eric.gradle.plugin.privacy.config
 
+import com.eric.gradle.plugin.privacy.config.bean.AOPFieldContractBean
+import com.eric.gradle.plugin.privacy.config.bean.AOPFieldResultBean
+import com.eric.gradle.plugin.privacy.config.bean.AOPMethodContractBean
+import com.eric.gradle.plugin.privacy.config.bean.AOPMethodResultBean
+
 /**
  * @Description: AOP辅助类，用于缓存被代理方法与代理方法直接的映射列表，以及从映射列表中找到匹配项进行AOP
  * @Author: Eric
@@ -9,21 +14,68 @@ package com.eric.gradle.plugin.privacy.config
  */
 object AOPHelper {
 
-    val aopMethodBeans = mutableListOf<AOPMethodBean>()
+    //记录隐私方法代理规则
+    val aopMethodBeans = mutableListOf<AOPMethodContractBean>()
+
+    //记录隐私属性代理规则
+    val aopFieldBeans = mutableListOf<AOPFieldContractBean>()
+
+    //记录已完成的AOP结果(key:被替换的原生类名+方法名，value：替换后的类和方法列表)
+    val aopMethodResultBeans = mutableMapOf<String, ArrayList<String>>()
+
+    //记录已完成的AOP结果(key:被替换的原生类名+属性名，value：替换后的类和属性列表)
+    val aopFieldResultBeans = mutableMapOf<String, ArrayList<String>>()
 
 
-    fun find(ownerClass: String?, methodName: String?, descriptor: String?): AOPMethodBean? {
+    fun findAopField(
+        ownerClass: String?,
+        fieldName: String?,
+        descriptor: String?
+    ): AOPFieldContractBean? {
+        if (fieldName == "") {
+            return null
+        }
+        return aopFieldBeans.find {
+            isAOPField(it, fieldName ?: "", ownerClass ?: "", descriptor ?: "")
+        }
+    }
+
+    fun findAopMethod(
+        ownerClass: String?,
+        methodName: String?,
+        descriptor: String?
+    ): AOPMethodContractBean? {
         if (methodName == "") {
             return null
         }
 
         return aopMethodBeans.find {
-            isAOPItem(it, methodName ?: "", ownerClass ?: "", descriptor ?: "")
+            isAOPMethod(it, methodName ?: "", ownerClass ?: "", descriptor ?: "")
         }
     }
 
-    private fun isAOPItem(
-        aopItem: AOPMethodBean,
+    private fun isAOPField(
+        aopItem: AOPFieldContractBean,
+        fieldName: String,
+        classOwnerName: String = "",
+        fieldDesc: String = ""
+    ): Boolean {
+        if (fieldName.isEmpty()) {
+            return false
+        }
+        return if (classOwnerName.isEmpty() && fieldDesc.isNotEmpty()) {
+            fieldName == aopItem.targetField && fieldDesc == aopItem.targetFieldDescriptor
+        } else if (classOwnerName.isNotEmpty() && fieldDesc.isEmpty()) {
+            fieldName == aopItem.targetField && classOwnerName == aopItem.targetClass
+        } else if (classOwnerName.isNotEmpty() && fieldDesc.isNotEmpty()) {
+            fieldName == aopItem.targetField && classOwnerName == aopItem.targetClass && fieldDesc == aopItem.targetFieldDescriptor
+        } else {
+            fieldName == aopItem.targetField
+        }
+    }
+
+    private fun isAOPMethod(
+        aopItem: AOPMethodContractBean,
         methodName: String,
         classOwnerName: String = "",
         methodDesc: String = ""
@@ -40,6 +92,28 @@ object AOPHelper {
         } else {
             methodName == aopItem.targetMethod
         }
+    }
+
+    fun addMethodAOPResult(aopResult: AOPMethodResultBean) {
+        val key =
+            aopResult.aopBean.targetClass.replace("/", ".") + "." + aopResult.aopBean.targetMethod
+        var bean = aopMethodResultBeans[key]
+        if (bean == null) {
+            bean = arrayListOf()
+        }
+        bean.add(aopResult.originClass.replace("/", ".") + "." + aopResult.originMethod)
+        aopMethodResultBeans[key] = bean
+    }
+
+    fun addFieldAOPResult(aopResult: AOPFieldResultBean) {
+        val key =
+            aopResult.aopBean.targetClass.replace("/", ".") + "." + aopResult.aopBean.targetField
+        var bean = aopFieldResultBeans[key]
+        if (bean == null) {
+            bean = arrayListOf()
+        }
+        bean.add(aopResult.originClass.replace("/", ".") + "." + aopResult.originField)
+        aopFieldResultBeans[key] = bean
     }
 
 }

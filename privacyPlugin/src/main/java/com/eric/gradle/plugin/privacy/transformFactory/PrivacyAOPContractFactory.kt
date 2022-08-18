@@ -5,9 +5,11 @@ import com.android.build.api.instrumentation.ClassContext
 import com.android.build.api.instrumentation.ClassData
 import com.android.build.api.instrumentation.InstrumentationParameters
 import com.eric.gradle.plugin.privacy.config.AOPHelper
-import com.eric.gradle.plugin.privacy.config.AOPMethodBean
-import com.eric.manager.privacy.annotation.PrivacyMethodOpcode
+import com.eric.gradle.plugin.privacy.config.bean.AOPFieldContractBean
+import com.eric.gradle.plugin.privacy.config.bean.AOPMethodContractBean
+import com.eric.manager.privacy.annotation.PrivacyOpcode
 import com.eric.manager.privacy.annotation.PrivacyProxyClass
+import com.eric.manager.privacy.annotation.PrivacyProxyField
 import com.eric.manager.privacy.annotation.PrivacyProxyMethod
 import org.objectweb.asm.*
 import org.objectweb.asm.commons.AdviceAdapter
@@ -68,6 +70,27 @@ class PrivacyContractVisitor(api: Int, nextClassVisitor: ClassVisitor) :
         return super.visitAnnotation(descriptor, visible)
     }
 
+    override fun visitField(
+        access: Int,
+        name: String?,
+        descriptor: String?,
+        signature: String?,
+        value: Any?
+    ): FieldVisitor {
+        val vf = super.visitField(access, name, descriptor, signature, value)
+        if (isContract) {
+            return PrivacyProxyFieldVisitor(
+                api,
+                vf,
+                access,
+                name ?: "",
+                className ?: "",
+                descriptor ?: ""
+            )
+        }
+        return vf
+    }
+
     override fun visitMethod(
         access: Int,
         name: String,
@@ -93,10 +116,83 @@ class PrivacyContractVisitor(api: Int, nextClassVisitor: ClassVisitor) :
     override fun visitEnd() {
         super.visitEnd()
         //打印AOP映射关系
-        println("AOP映射关系：")
+        println("隐私属性AOP映射关系：")
+        for (bean in AOPHelper.aopFieldBeans) {
+            println(bean.toString())
+        }
+        println("隐私方法AOP映射关系：")
         for (bean in AOPHelper.aopMethodBeans) {
             println(bean.toString())
         }
+    }
+}
+
+//自定义FieldVisitor
+class PrivacyProxyFieldVisitor(
+    api: Int,
+    classVisitor: FieldVisitor,
+    access: Int,
+    private val name: String,
+    private val className: String,
+    private val fieldDescriptor: String
+) : FieldVisitor(api, classVisitor) {
+    override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
+        val va = super.visitAnnotation(descriptor, visible)
+        if (descriptor == Type.getDescriptor(PrivacyProxyField::class.java)) {
+            //生成映射类
+            return PrivacyProxyFieldAnnotationVisitor(
+                api,
+                va,
+                name,
+                className,
+                fieldDescriptor
+            )
+        }
+        return va
+    }
+}
+
+//自定义AnnotationVisitor解析属性注解
+class PrivacyProxyFieldAnnotationVisitor(
+    api: Int,
+    va: AnnotationVisitor,
+    name: String,
+    className: String,
+    descriptor: String
+) : AnnotationVisitor(api, va) {
+    private var aopBean = AOPFieldContractBean(
+        proxyClass = className,
+        proxyField = name,
+        proxyFieldDescriptor = descriptor
+    )
+
+    override fun visit(name: String?, value: Any?) {
+        super.visit(name, value)
+        when (name) {
+            "targetClass" -> {
+                val clazz = value.toString()
+                //Landroid/content/pm/PackageManager;转为android/content/pm/PackageManager
+                //aopBean的targetClass和proxyClass都处理为斜杠分割的形式
+                aopBean.targetClass = clazz.substring(1, clazz.length - 1)
+            }
+            "targetField" -> aopBean.targetField = value.toString()
+        }
+    }
+
+    override fun visitEnum(name: String?, descriptor: String?, value: String?) {
+        super.visitEnum(name, descriptor, value)
+        //targetFieldOpcode注解属性是枚举类型，需要在这个方法获取
+        if ("targetFieldOpcode" == name) {
+            aopBean.targetFieldOpcode = value?.let { PrivacyOpcode.valueOf(it).opcode }
+        }
+    }
+
+    override fun visitEnd() {
+        super.visitEnd()
+        //由于返回值类型都是一样的，所以原属性与代理属性都使用相同的descriptor
+        aopBean.targetFieldDescriptor = aopBean.proxyFieldDescriptor
+        //保存此次结果，后面正式进行字节码替换时，会从这个映射数据中进行匹配
+        AOPHelper.aopFieldBeans.add(aopBean)
     }
 }
 
@@ -127,16 +223,15 @@ class PrivacyProxyMethodVisitor(
     }
 }
 
-//自定义
+//自定义AnnotationVisitor解析方法注解
 class PrivacyProxyMethodAnnotationVisitor(
     api: Int,
     va: AnnotationVisitor,
     methodName: String,
     className: String,
     descriptor: String
-) :
-    AnnotationVisitor(api, va) {
-    private var aopBean = AOPMethodBean(
+) : AnnotationVisitor(api, va) {
+    private var aopBean = AOPMethodContractBean(
         proxyClass = className,
         proxyMethod = methodName,
         proxyMethodDescriptor = descriptor
@@ -159,17 +254,17 @@ class PrivacyProxyMethodAnnotationVisitor(
         super.visitEnum(name, descriptor, value)
         //targetMethodOpcode注解属性是枚举类型，需要在这个方法获取
         if ("targetMethodOpcode" == name) {
-            aopBean.targetMethodOpcode = value?.let { PrivacyMethodOpcode.valueOf(it).opcode }
+            aopBean.targetMethodOpcode = value?.let { PrivacyOpcode.valueOf(it).opcode }
         }
     }
 
     override fun visitEnd() {
         super.visitEnd()
         // 需要注意的是，如果是实例方法调用，由于我们定义的代理方法是完全仿照原方法的，除了多了第一个参数是该实例自身，而原方法是没有这个参数，所以proxyMethodDescriptor的值裁剪掉第一个参数，就跟原方法的一致了
-        if (aopBean.targetMethodOpcode == PrivacyMethodOpcode.INVOKEVIRTUAL.opcode || aopBean.targetMethodOpcode == PrivacyMethodOpcode.INVOKEINTERFACE.opcode) {
+        if (aopBean.targetMethodOpcode == PrivacyOpcode.INVOKEVIRTUAL.opcode || aopBean.targetMethodOpcode == PrivacyOpcode.INVOKEINTERFACE.opcode) {
             aopBean.targetMethodDescriptor =
                 aopBean.proxyMethodDescriptor.replace("L${aopBean.targetClass};", "")
-        } else if (aopBean.targetMethodOpcode == PrivacyMethodOpcode.INVOKESTATIC.opcode) {
+        } else if (aopBean.targetMethodOpcode == PrivacyOpcode.INVOKESTATIC.opcode) {
             //原方法是静态调用的，则跟代理方法的签名信息一致
             aopBean.targetMethodDescriptor = aopBean.proxyMethodDescriptor
         }

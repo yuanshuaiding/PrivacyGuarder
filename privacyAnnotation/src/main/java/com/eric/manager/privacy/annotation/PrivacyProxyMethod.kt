@@ -14,5 +14,5 @@ import kotlin.reflect.KClass
 annotation class PrivacyProxyMethod(
     val targetClass: KClass<*>,//原方法所在类名
     val targetMethod: String,//原方法名
-    val targetMethodOpcode: PrivacyMethodOpcode//用于判断是静态方法调用还是实例方法调用
+    val targetMethodOpcode: PrivacyOpcode//用于判断是静态方法调用还是实例方法调用
 )

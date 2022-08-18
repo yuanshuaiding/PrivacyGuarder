@@ -1,10 +1,11 @@
-package com.eric.manager.privacy.app.aop
+package com.eric.manager.privacy.app.privacyAop
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
-import com.eric.manager.privacy.annotation.PrivacyMethodOpcode
+import com.eric.manager.privacy.annotation.PrivacyOpcode
 import com.eric.manager.privacy.annotation.PrivacyProxyClass
+import com.eric.manager.privacy.annotation.PrivacyProxyField
 import com.eric.manager.privacy.annotation.PrivacyProxyMethod
 import com.eric.manager.privacy.app.privacyConfig.PrivacyUtil
 
@@ -17,10 +18,23 @@ import com.eric.manager.privacy.app.privacyConfig.PrivacyUtil
  */
 @PrivacyProxyClass
 object AOPPrivacyAPI {
+
+    @PrivacyProxyField(
+        targetClass = Build::class,
+        targetField = "SERIAL",
+        targetFieldOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    val SERIAL: String = if (!PrivacyUtil.isAgreed()) {
+        ""
+    } else {
+        Build.SERIAL
+    }
+
     @PrivacyProxyMethod(
         targetClass = PackageManager::class,
         targetMethod = "getInstalledPackages",
-        targetMethodOpcode = PrivacyMethodOpcode.INVOKEVIRTUAL
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
     )
     @JvmStatic
     fun getInstalledPackages(packageManager: PackageManager, flage: Int): List<PackageInfo> {
@@ -33,7 +47,7 @@ object AOPPrivacyAPI {
     @PrivacyProxyMethod(
         targetClass = Build::class,
         targetMethod = "getSerial",
-        targetMethodOpcode = PrivacyMethodOpcode.INVOKESTATIC
+        targetMethodOpcode = PrivacyOpcode.INVOKESTATIC
     )
     @JvmStatic
     fun getSerial(): String {

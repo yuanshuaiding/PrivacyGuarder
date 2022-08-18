@@ -20,8 +20,12 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class TestInjectJava {
 
-    //直接在声明成员变量时获取隐私数据
-    String sn= Build.getSerial();
+    //直接在声明成员变量时调用隐私API
+    String sn1= Build.getSerial();
+    //直接在声明成员变量时访问隐私属性
+    String sn2= Build.SERIAL;
+    //直接在声明成员变量时访问隐私属性且为静态类型
+    public static String sn3= Build.SERIAL;
 
     public static List<AppInfo> getAppsInfo(Context context) {
         ArrayList<AppInfo> list = new ArrayList<>();
