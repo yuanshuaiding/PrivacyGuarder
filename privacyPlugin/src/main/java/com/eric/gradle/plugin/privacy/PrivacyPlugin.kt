@@ -69,9 +69,9 @@ class PrivacyPlugin : Plugin<Project> {
                 config = project.extensions.findByType(PrivacyConfig::class.java)
                 println("############################合规治理配置清单 start#########################")
                 println("此次编译privacyGovernPlugin是否生效：${config?.apply}")
-                println("永久禁用的隐私API：")
-                config?.forbidden?.forEach { api ->
-                    println(api)
+                println("以下包名插件不生效：")
+                config?.ignorePKG?.forEach { pkg ->
+                    println(pkg)
                 }
                 println("############################合规治理配置清单   end#########################")
             }
@@ -92,10 +92,10 @@ class PrivacyPlugin : Plugin<Project> {
 
                 //开始注册transform操作字节码
 
-                //1. 隐私API替换规则类解析，用于生成需要替换的隐私API与代理API之间的映射关系(此处的解析范围仅限为自己的项目，你需要在自己的项目中使用注解定义好替换规则类)
+                //1. 隐私API替换规则类解析，用于生成需要替换的隐私API与代理API之间的映射关系
                 variant.instrumentation.transformClassesWith(
                     PrivacyAOPContractFactory::class.java,
-                    InstrumentationScope.PROJECT
+                    InstrumentationScope.ALL
                 ) { }
                 //2. 隐私API替换，根据第1步生成的映射关系，发现匹配的隐私方法、属性调用时使用代理API进行AOP
                 variant.instrumentation.transformClassesWith(
@@ -107,11 +107,7 @@ class PrivacyPlugin : Plugin<Project> {
                         it.ignorePKG?.forEach { pkg ->
                             params.ignoredPKG.add(pkg)
                         }
-                        //从配置中获取永久禁用API
-                        it.forbidden?.forEach { api ->
-                            params.forbiddenAPI.add(api)
 
-                        }
                         //从配置中获取AOP结果文件名
                         params.outFile.set(it.outFile)
                     }
@@ -153,15 +149,14 @@ class PrivacyPlugin : Plugin<Project> {
                 FileUtils.deleteQuietly(resultFile)
             }
             val gson = GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create()
-            val result =
-                """
-                隐私属性AOP结果：
-                ${gson.toJson(AOPHelper.aopFieldResultBeans)}
-                
-                隐私方法AOP结果：
-                ${gson.toJson(AOPHelper.aopMethodResultBeans)}
-                
-                """
+            val result = """
+隐私属性AOP结果：
+${gson.toJson(AOPHelper.aopFieldResultBeans)}
+
+隐私方法AOP结果：
+${gson.toJson(AOPHelper.aopMethodResultBeans)}
+
+"""
             FileUtils.write(resultFile, result, Charset.forName("UTF-8"))
             return resultFile.absolutePath
         } catch (e: Exception) {

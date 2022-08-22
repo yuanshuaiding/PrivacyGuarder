@@ -6,30 +6,132 @@
     android:layout_height="match_parent"
     tools:context=".app.MainActivity">
 
-    <TextView
-        android:id="@+id/tvResult"
+    <Button
+        android:id="@+id/btnAgree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="同意隐私"
+        app:layout_constraintEnd_toStartOf="@id/btnDisagree"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnDisagree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="撤销同意隐私"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnAgree"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnAppList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="获取应用列表(JAVA)"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnAgree">
 
-    <Button
-        android:id="@+id/btnAppList2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="获取应用列表(Kotlin)"
-        app:layout_constraintTop_toBottomOf="@+id/btnAppList"
-        app:layout_constraintStart_toStartOf="parent"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_test_sn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试Android序列号（getSerial()）" />
+
+            <Button
+                android:id="@+id/btn_androidId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试AndroidId" />
+
+            <Button
+                android:id="@+id/btn_deviceId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试DeviceId" />
+
+
+            <Button
+                android:id="@+id/btn_imei"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试Imei" />
+
+            <Button
+                android:id="@+id/btn_imsi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试Imsi" />
+
+            <Button
+                android:id="@+id/btn_mac_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试mac地址" />
+
+            <Button
+                android:id="@+id/btn_iccid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试sim卡唯一标识符" />
+
+            <Button
+                android:id="@+id/btn_installed_packages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试已安装包列表(java)" />
+
+            <Button
+                android:id="@+id/btn_installed_packages2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试已安装包列表(kotlin)" />
+
+            <Button
+                android:id="@+id/btn_test_ams_process"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试读取运行中的进程" />
+
+
+            <Button
+                android:id="@+id/btn_main_process"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="判断主进程，跳过当前敏感函数" />
+
+            <Button
+                android:id="@+id/btn_test_cms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试剪贴板服务" />
+
+
+            <Button
+                android:id="@+id/btn_to_calender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="跳转日历测试Ac" />
+
+            <Button
+                android:id="@+id/btn_to_contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="跳转联系人测试Ac" />
+
+            <Button
+                android:id="@+id/btn_test_sensor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="注册传感器" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

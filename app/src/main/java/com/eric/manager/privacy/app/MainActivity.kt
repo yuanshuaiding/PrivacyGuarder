@@ -6,6 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.eric.manager.privacy.annotation.TimeCost
 import com.eric.manager.privacy.databinding.ActivityMainBinding
+import com.eric.manager.privacy.databinding.DialogShowValueBinding
+import com.eric.manager.privacyproxy.PrivacyGuarder
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -14,7 +17,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.btnAppList.setOnClickListener {
+
+        binding.btnAgree.setOnClickListener {
+            PrivacyGuarder.setAgreement(true)
+        }
+
+        binding.btnDisagree.setOnClickListener {
+            PrivacyGuarder.setAgreement(false)
+        }
+
+        binding.btnTestSn.setOnClickListener {
+            val sn = TestInjectJava.getSerial()
+            showValue("设备序列号SERIAL", sn)
+        }
+
+        binding.btnInstalledPackages.setOnClickListener {
             val apps = TestInjectJava.getAppsInfo(this)
             val sb = StringBuilder()
             if (apps.isNullOrEmpty()) {
@@ -25,10 +42,11 @@ class MainActivity : AppCompatActivity() {
                     sb.append(app.packageName).append("\n")
                 }
             }
-            binding.tvResult.text = sb
+
+            showValue("应用列表", sb.toString())
         }
 
-        binding.btnAppList2.setOnClickListener {
+        binding.btnInstalledPackages2.setOnClickListener {
             val apps = TestInjectJava.getAppsInfo(this)
             val sb = StringBuilder()
             if (apps.isNullOrEmpty()) {
@@ -39,8 +57,22 @@ class MainActivity : AppCompatActivity() {
                     sb.append(app.packageName).append("\n")
                 }
             }
-            binding.tvResult.text = sb
+            showValue("应用列表", sb.toString())
         }
 
+    }
+
+    private fun showValue(key: String, value: String?) {
+        val dialog = BottomSheetDialog(this)
+        val dialogBinding = DialogShowValueBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogBinding.root)
+        dialogBinding.btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogBinding.tvKey.text = key
+        dialogBinding.tvValue.text = value ?: ""
+
+        dialog.show()
     }
 }

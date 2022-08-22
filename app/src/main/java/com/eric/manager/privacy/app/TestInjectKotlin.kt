@@ -26,6 +26,15 @@ class TestInjectKotlin {
     //直接在声明成员变量时访问隐私属性
     var sn2 = Build.SERIAL
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getSN():String{
+        return Build.getSerial()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getSN2():String{
+        return Build.SERIAL
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getAppsInfo(context: Context): List<AppInfo>? {

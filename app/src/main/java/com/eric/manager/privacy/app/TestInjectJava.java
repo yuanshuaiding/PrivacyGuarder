@@ -21,11 +21,16 @@ import java.util.List;
 public class TestInjectJava {
 
     //直接在声明成员变量时调用隐私API
-    String sn1= Build.getSerial();
+    String sn1 = Build.getSerial();
+    static final String sn2 = Build.getSerial();
     //直接在声明成员变量时访问隐私属性
-    String sn2= Build.SERIAL;
+    String sn3 = Build.SERIAL;
     //直接在声明成员变量时访问隐私属性且为静态类型
-    public static String sn3= Build.SERIAL;
+    public static String sn4 = Build.SERIAL;
+
+    public static String getSerial() {
+        return Build.getSerial();
+    }
 
     public static List<AppInfo> getAppsInfo(Context context) {
         ArrayList<AppInfo> list = new ArrayList<>();

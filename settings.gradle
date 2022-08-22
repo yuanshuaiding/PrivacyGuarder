@@ -27,3 +27,4 @@ rootProject.name = "PrivacyGuarder"
 include ':app'
 include ':privacyPlugin'
 include ':privacyAnnotation'
+include ':privacyProxy'
