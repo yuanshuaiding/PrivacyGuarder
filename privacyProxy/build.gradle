@@ -46,6 +46,7 @@ project.afterEvaluate {
         publications {
             maven(MavenPublication) {
                 artifactId = 'privacyProxcy'
+                from components.release
             }
         }
 
