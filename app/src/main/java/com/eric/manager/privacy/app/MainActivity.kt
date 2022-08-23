@@ -30,6 +30,10 @@ class MainActivity : AppCompatActivity() {
             val sn = TestInjectJava.getSerial()
             showValue("设备序列号SERIAL", sn)
         }
+        binding.btnAndroidId.setOnClickListener {
+            val id = TestInjectJava.getAndroidId(this@MainActivity)
+            showValue("设备Android ID", id)
+        }
 
         binding.btnInstalledPackages.setOnClickListener {
             val apps = TestInjectJava.getAppsInfo(this)

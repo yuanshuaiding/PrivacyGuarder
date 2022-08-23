@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.Settings;
 
 import androidx.annotation.RequiresApi;
 
@@ -30,6 +31,10 @@ public class TestInjectJava {
 
     public static String getSerial() {
         return Build.getSerial();
+    }
+
+    public static String getAndroidId(Context ctx) {
+        return Settings.Secure.getString(ctx.getContentResolver(), "android_id");
     }
 
     public static List<AppInfo> getAppsInfo(Context context) {

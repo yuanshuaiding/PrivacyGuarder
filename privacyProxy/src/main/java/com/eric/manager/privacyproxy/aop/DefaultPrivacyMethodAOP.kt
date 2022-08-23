@@ -420,7 +420,7 @@ object DefaultPrivacyMethodAOP {
         targetMethodOpcode = PrivacyOpcode.INVOKESTATIC
     )
     @JvmStatic
-    fun getStringSystem(contentResolver: ContentResolver?, type: String?): String? {
+    fun getStringSystem(contentResolver: ContentResolver?, type: String?): String {
         return getString(contentResolver, type)
     }
 
