@@ -24,7 +24,7 @@ gradlePlugin {
 
 //插件发布(gradle 7.x后使用下面的方式发布插件)
 group = 'com.eric.gradle.plugin.privacy'
-version = '1.0'
+version = "$sdk_version"
 publishing {
     publications {
         maven(MavenPublication) {

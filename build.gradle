@@ -2,7 +2,8 @@
 buildscript {
     ext {
         agp_version = '7.2.1'
-        kt_version='1.7.10'
+        kt_version = '1.7.10'
+        sdk_version = "1.2"
     }
     dependencies {
         classpath 'com.eric.gradle.plugin.privacy:privacyPlugin:1.0'

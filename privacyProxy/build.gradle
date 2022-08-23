@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    //用于发布至maven仓库的插件
+    id 'maven-publish'
 }
 
 android {
@@ -33,4 +35,24 @@ dependencies {
     //MMKV——基于 mmap 的高性能通用 key-value 组件(当前库用于加密存储已获取的隐私数据)
     implementation 'com.tencent:mmkv:1.2.14'
     implementation project(':privacyAnnotation')
+}
+
+//插件发布(gradle 7.x后使用下面的方式发布插件)
+group = 'com.eric.manager.privacy'
+version = "$sdk_version"
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifactId = 'privacyProxcy'
+            }
+        }
+
+        repositories {
+            maven {
+                url = uri('../maven-repo')
+            }
+        }
+    }
 }
