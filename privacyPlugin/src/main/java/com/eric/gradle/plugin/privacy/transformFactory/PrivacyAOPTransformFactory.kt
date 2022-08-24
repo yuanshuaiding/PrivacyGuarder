@@ -67,7 +67,7 @@ abstract class PrivacyAOPTransformFactory : AsmClassVisitorFactory<PrivacyAOPPar
             } != null) {
             return false
         }
-        //一些已知不会调用隐私API的库也不需要AOP，如自动生成的R类，Android官方库等（org.intellij.lang.annotations.Subst）
+        //一些已知不会调用隐私API的库也不需要AOP，如自动生成的R类，Android,java，kotlin官方库等
         if (className.endsWith(".R")
             || className.endsWith(".BuildConfig")
             || className.contains("android.support.")
@@ -77,8 +77,10 @@ abstract class PrivacyAOPTransformFactory : AsmClassVisitorFactory<PrivacyAOPPar
             || className.startsWith("androidx.")
             //kotlin相关库
             || className.startsWith("kotlin.")
+            || className.startsWith("kotlinx.")
             //intellij相关库
             || className.startsWith("org.intellij.")
+            || className.startsWith("org.jetbrains.")
             // 当前库本身(注解库，其他辅助工具库)
             || className.contains("com.eric.manager.privacy.annotation")
         ) {

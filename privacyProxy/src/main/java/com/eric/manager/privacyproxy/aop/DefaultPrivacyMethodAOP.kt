@@ -448,9 +448,10 @@ object DefaultPrivacyMethodAOP {
     )
     @JvmStatic
     fun getPackageInfo(manager: PackageManager, pkg: String, flags: Int): PackageInfo? {
-        LogAOP.log("getPackageInfo", "安装包-getPackageInfo")
+        LogAOP.log("PackageManager", "安装包-getPackageInfo")
         if (!PrivacyGuarder.isAgreed()) {
-            return null
+            //模仿原方法，直接抛异常
+            throw PackageManager.NameNotFoundException("PrivacyGuarder:PackageManager.getPackageInfo方法调用前需要同意隐私政策")
         }
         return manager.getPackageInfo(pkg, flags)
     }
@@ -464,7 +465,8 @@ object DefaultPrivacyMethodAOP {
     fun getApplicationInfo(manager: PackageManager, pkg: String, flags: Int): ApplicationInfo? {
         LogAOP.log("getApplicationInfo", "安装包-getApplicationInfo")
         if (!PrivacyGuarder.isAgreed()) {
-            return null
+            //模仿原方法，直接抛异常
+            throw PackageManager.NameNotFoundException("PrivacyGuarder:PackageManager.getApplicationInfo方法调用前需要同意隐私政策")
         }
         return manager.getApplicationInfo(pkg, flags)
     }
@@ -1128,6 +1130,9 @@ object DefaultPrivacyMethodAOP {
         samplingPeriodUs: Int
     ): Boolean {
         logSensorManager(sensor)
+        if (!PrivacyGuarder.isAgreed()) {
+            return false
+        }
         return sensorManager.registerListener(listener, sensor, samplingPeriodUs)
     }
 
@@ -1143,6 +1148,9 @@ object DefaultPrivacyMethodAOP {
         samplingPeriodUs: Int, maxReportLatencyUs: Int
     ): Boolean {
         logSensorManager(sensor)
+        if (!PrivacyGuarder.isAgreed()) {
+            return false
+        }
         return sensorManager.registerListener(
             listener,
             sensor,
@@ -1163,6 +1171,9 @@ object DefaultPrivacyMethodAOP {
         samplingPeriodUs: Int, handler: Handler?
     ): Boolean {
         logSensorManager(sensor)
+        if (!PrivacyGuarder.isAgreed()) {
+            return false
+        }
         return sensorManager.registerListener(listener, sensor, samplingPeriodUs, handler)
     }
 
@@ -1178,6 +1189,9 @@ object DefaultPrivacyMethodAOP {
         samplingPeriodUs: Int, maxReportLatencyUs: Int, handler: Handler?
     ): Boolean {
         logSensorManager(sensor)
+        if (!PrivacyGuarder.isAgreed()) {
+            return false
+        }
         return sensorManager.registerListener(
             listener,
             sensor,
