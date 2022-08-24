@@ -1,0 +1,82 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.eric.manager.privacy",
+    "module": "privacyAnnotation",
+    "version": "2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.3.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.7.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "privacyAnnotation-2.0.jar",
+          "url": "privacyAnnotation-2.0.jar",
+          "size": 5066,
+          "sha512": "4679b324443ccd73fa223f7e340a3956cc8d591ee00a7767790cbe6254bc31e416c31ed74dd0f151ba3947c62757a8963de953c32345399cc42cd72d43cc6f3c",
+          "sha256": "1e670fe7035eed5ba5bf7d5fd4eeff6d463724633c15bf82806de4bb524847b8",
+          "sha1": "34cc8f1f095756884420edb209a20da0069b25c9",
+          "md5": "77cd2cf95f0369b833b1b72431e090d7"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.7.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "privacyAnnotation-2.0.jar",
+          "url": "privacyAnnotation-2.0.jar",
+          "size": 5066,
+          "sha512": "4679b324443ccd73fa223f7e340a3956cc8d591ee00a7767790cbe6254bc31e416c31ed74dd0f151ba3947c62757a8963de953c32345399cc42cd72d43cc6f3c",
+          "sha256": "1e670fe7035eed5ba5bf7d5fd4eeff6d463724633c15bf82806de4bb524847b8",
+          "sha1": "34cc8f1f095756884420edb209a20da0069b25c9",
+          "md5": "77cd2cf95f0369b833b1b72431e090d7"
+        }
+      ]
+    }
+  ]
+}

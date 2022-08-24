@@ -33,12 +33,12 @@ class PrivacyPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         //只在application下生效
         if (!project.plugins.hasPlugin("com.android.application")) {
-            println("${project.name}非Android app模块，无法使用合规治理插件privacyGovernPlugin，请正确配置！")
+            println("${project.name}非Android app模块，无法使用合规治理插件privacyGuarderPlugin，请正确配置！")
             return
         }
 
 
-        println("${project.name}合规治理插件privacyGovernPlugin配置中...")
+        println("${project.name}合规治理插件privacyGuarderPlugin配置中...")
 
         //添加配置拓展
         project.extensions.create(PRIVACY_PLUGIN_CONFIG_EXT, PrivacyConfig::class.java)
@@ -68,7 +68,7 @@ class PrivacyPlugin : Plugin<Project> {
             if (config == null) {
                 config = project.extensions.findByType(PrivacyConfig::class.java)
                 println("############################合规治理配置清单 start#########################")
-                println("此次编译privacyGovernPlugin是否生效：${config?.apply}")
+                println("此次编译privacyGuarderPlugin是否生效：${config?.apply}")
                 println("以下包名插件不生效：")
                 config?.ignorePKG?.forEach { pkg ->
                     println(pkg)
@@ -81,16 +81,14 @@ class PrivacyPlugin : Plugin<Project> {
             // 要想不影响开发阶段，可选择只对release版本生效，或config.apply=false
             //androidComponents.selector().withBuildType("release")
         ) { variant ->
-            println("构建变体名称:" + variant.name)
-            println("构建变体BuildType:" + variant.buildType)
             //清空一下缓存
             AOPHelper.aopFieldResultBeans.clear()
             AOPHelper.aopMethodResultBeans.clear()
             if (config?.apply != true) {
-                println("${project.name}合规治理插件开关已关闭，字节码修改失效")
+                println("${project.name}合规治理插件开关已关闭！")
                 return@onVariants
             } else {
-                println("${project.name}合规治理插件开关已开启，字节码修改进行中...")
+                println("${project.name}合规治理插件开关已开启！字节码AOP准备中...")
 
                 //开始注册transform操作字节码
 

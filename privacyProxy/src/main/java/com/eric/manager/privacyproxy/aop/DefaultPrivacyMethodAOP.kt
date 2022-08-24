@@ -448,7 +448,7 @@ object DefaultPrivacyMethodAOP {
     )
     @JvmStatic
     fun getPackageInfo(manager: PackageManager, pkg: String, flags: Int): PackageInfo? {
-        LogAOP.log("PackageManager", "安装包-getPackageInfo")
+        LogAOP.log("getPackageInfo", "安装包-getPackageInfo")
         if (!PrivacyGuarder.isAgreed()) {
             //模仿原方法，直接抛异常
             throw PackageManager.NameNotFoundException("PrivacyGuarder:PackageManager.getPackageInfo方法调用前需要同意隐私政策")
