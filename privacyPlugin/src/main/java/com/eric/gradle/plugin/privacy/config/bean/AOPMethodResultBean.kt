@@ -10,5 +10,6 @@ package com.eric.gradle.plugin.privacy.config.bean
 data class AOPMethodResultBean(
     var originClass: String,
     var originMethod: String,
+    var lineNum: Int?,
     var aopBean: AOPMethodContractBean
 )

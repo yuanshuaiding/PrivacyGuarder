@@ -1,0 +1,151 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.eric.gradle.plugin.privacy",
+    "module": "privacyPlugin",
+    "version": "1.8",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.3.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.7.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "privacyPlugin-1.8.jar",
+          "url": "privacyPlugin-1.8.jar",
+          "size": 46573,
+          "sha512": "54f46df1f474fe91ceeba6ab94b98e66bfd7af435bb2caaca9be326bbc3657f97bf3d68ef0e5ed7525c8b3489184a4ce6be3d5ec2eac776b8cf7c5d7fef6ed49",
+          "sha256": "c38b49d439f2ec267f929e2962530eb5198780d7742ce8f160671de5bff6c2df",
+          "sha1": "b43c49e03fe983d743bf9f3f16275fe453aecdcd",
+          "md5": "9a4cb5a77f61794c311a179d9e25aa0b"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.ow2.asm",
+          "module": "asm",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-commons",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-analysis",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-util",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-tree",
+          "version": {
+            "requires": "9.3"
+          }
+        },
+        {
+          "group": "commons-io",
+          "module": "commons-io",
+          "version": {
+            "requires": "2.11.0"
+          }
+        },
+        {
+          "group": "com.google.code.gson",
+          "module": "gson",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.eric.manager.privacy",
+          "module": "privacyAnnotation",
+          "version": {
+            "requires": "1.8"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "7.2.1"
+          },
+          "excludes": [
+            {
+              "group": "org.ow2.asm",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.7.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "privacyPlugin-1.8.jar",
+          "url": "privacyPlugin-1.8.jar",
+          "size": 46573,
+          "sha512": "54f46df1f474fe91ceeba6ab94b98e66bfd7af435bb2caaca9be326bbc3657f97bf3d68ef0e5ed7525c8b3489184a4ce6be3d5ec2eac776b8cf7c5d7fef6ed49",
+          "sha256": "c38b49d439f2ec267f929e2962530eb5198780d7742ce8f160671de5bff6c2df",
+          "sha1": "b43c49e03fe983d743bf9f3f16275fe453aecdcd",
+          "md5": "9a4cb5a77f61794c311a179d9e25aa0b"
+        }
+      ]
+    }
+  ]
+}

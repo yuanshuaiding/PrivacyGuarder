@@ -10,7 +10,10 @@ import com.eric.gradle.plugin.privacy.config.bean.AOPMethodResultBean
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.objectweb.asm.*
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.Label
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
 
 /**
@@ -122,6 +125,8 @@ private class PrivacyAOPVisitor(classVisitor: ClassVisitor) :
         val originMethodName = name
         //使用原始methodVisitor构造新的methodVisitor，并完成AOP操作，此处使用AdviceAdapter是因为它是MethodVisitor的子类并做了进一步封装，使用起来更简单
         return object : AdviceAdapter(api, methodVisitor, access, name, descriptor) {
+            private var lineNum: Int? = 0
+
             //类体内方法指令调用（对应java代码里某一行方法调用代码）
             override fun visitMethodInsn(
                 opcodeAndSource: Int,
@@ -143,10 +148,22 @@ private class PrivacyAOPVisitor(classVisitor: ClassVisitor) :
                     )
 
                     //将AOP结果保留，全部替换完后输出到指定文件
-                    AOPHelper.addMethodAOPResult(AOPMethodResultBean(originClassName ?: "", originMethodName ?: "", aopBean))
+                    AOPHelper.addMethodAOPResult(
+                        AOPMethodResultBean(
+                            originClassName ?: "",
+                            originMethodName ?: "",
+                            lineNum,
+                            aopBean
+                        )
+                    )
                     return
                 }
                 super.visitMethodInsn(opcodeAndSource, owner, name, descriptor, isInterface)
+            }
+
+            override fun visitLineNumber(line: Int, start: Label?) {
+                lineNum = line
+                super.visitLineNumber(line, start)
             }
 
             //类体里除了会出现隐私API调用，其实隐私属性也有可能被访问，如：val sn=Build.SERIAL
@@ -160,10 +177,22 @@ private class PrivacyAOPVisitor(classVisitor: ClassVisitor) :
                 //从收集到的AOP映射列表里取出对应项
                 val aopBean = AOPHelper.findAopField(owner, name, descriptor)
                 if (aopBean != null) {
-                    mv.visitFieldInsn(Opcodes.GETSTATIC,aopBean.proxyClass,aopBean.proxyField,aopBean.proxyFieldDescriptor)
+                    mv.visitFieldInsn(
+                        Opcodes.GETSTATIC,
+                        aopBean.proxyClass,
+                        aopBean.proxyField,
+                        aopBean.proxyFieldDescriptor
+                    )
 
                     //将AOP结果保留，全部替换完后输出到指定文件
-                    AOPHelper.addFieldAOPResult(AOPFieldResultBean(originClassName ?: "", name ?: "", aopBean))
+                    AOPHelper.addFieldAOPResult(
+                        AOPFieldResultBean(
+                            originClassName ?: "",
+                            name ?: "",
+                            lineNum,
+                            aopBean
+                        )
+                    )
 
                     return
                 }

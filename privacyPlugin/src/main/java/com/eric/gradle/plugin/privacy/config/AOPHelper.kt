@@ -101,7 +101,14 @@ object AOPHelper {
         if (bean == null) {
             bean = arrayListOf()
         }
-        bean.add(aopResult.originClass.replace("/", ".") + "." + aopResult.originMethod)
+        val aop = aopResult.originClass.replace("/", ".") +
+                "." + aopResult.originMethod + "：" + aopResult.lineNum +
+                " --> " +
+                aopResult.aopBean.proxyClass.replace("/", ".") +
+                "." + aopResult.aopBean.proxyMethod
+        if (!bean.contains(aop)) {
+            bean.add(aop)
+        }
         aopMethodResultBeans[key] = bean
     }
 
@@ -112,7 +119,14 @@ object AOPHelper {
         if (bean == null) {
             bean = arrayListOf()
         }
-        bean.add(aopResult.originClass.replace("/", ".") + "." + aopResult.originField)
+        val aop = aopResult.originClass.replace("/", ".") +
+                "." + aopResult.originField + "：" + aopResult.lineNum +
+                " --> " +
+                aopResult.aopBean.proxyClass.replace("/", ".") +
+                "." + aopResult.aopBean.proxyField
+        if (!bean.contains(aop)) {
+            bean.add(aop)
+        }
         aopFieldResultBeans[key] = bean
     }
 

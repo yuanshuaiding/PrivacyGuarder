@@ -10,5 +10,6 @@ package com.eric.gradle.plugin.privacy.config.bean
 data class AOPFieldResultBean(
     var originClass: String,
     var originField: String,
+    val lineNum: Int?,
     var aopBean: AOPFieldContractBean
 )

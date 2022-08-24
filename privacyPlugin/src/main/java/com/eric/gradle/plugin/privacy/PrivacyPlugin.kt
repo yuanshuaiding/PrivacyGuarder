@@ -83,7 +83,9 @@ class PrivacyPlugin : Plugin<Project> {
         ) { variant ->
             println("构建变体名称:" + variant.name)
             println("构建变体BuildType:" + variant.buildType)
-
+            //清空一下缓存
+            AOPHelper.aopFieldResultBeans.clear()
+            AOPHelper.aopMethodResultBeans.clear()
             if (config?.apply != true) {
                 println("${project.name}合规治理插件开关已关闭，字节码修改失效")
                 return@onVariants
