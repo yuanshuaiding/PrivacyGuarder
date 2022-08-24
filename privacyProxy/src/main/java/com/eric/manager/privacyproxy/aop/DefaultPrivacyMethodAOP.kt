@@ -440,6 +440,34 @@ object DefaultPrivacyMethodAOP {
 
     @PrivacyProxyMethod(
         targetClass = PackageManager::class,
+        targetMethod = "getPackageInfo",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun getPackageInfo(manager: PackageManager,pkg:String, flags: Int): PackageInfo? {
+        LogAOP.log("getPackageInfo", "安装包-getPackageInfo")
+        if (!PrivacyGuarder.isAgreed()) {
+            return null
+        }
+        return manager.getPackageInfo(pkg,flags)
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = PackageManager::class,
+        targetMethod = "getApplicationInfo",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun getApplicationInfo(manager: PackageManager,pkg:String, flags: Int): ApplicationInfo? {
+        LogAOP.log("getApplicationInfo", "安装包-getApplicationInfo")
+        if (!PrivacyGuarder.isAgreed()) {
+            return null
+        }
+        return manager.getApplicationInfo(pkg,flags)
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = PackageManager::class,
         targetMethod = "getInstalledPackagesAsUser",
         targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
     )
