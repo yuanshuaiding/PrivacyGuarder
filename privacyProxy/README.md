@@ -1,6 +1,6 @@
 待测试：
 - getHardwareAddress
-
+- getPackageInfo
 
 需要移除权限：
 

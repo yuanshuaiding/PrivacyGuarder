@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.hardware.Sensor
+import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
@@ -20,9 +21,11 @@ import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
+import android.os.Handler
 import android.provider.Settings
 import android.telephony.CellInfo
 import android.telephony.TelephonyManager
+import android.view.OrientationEventListener
 import androidx.annotation.Keep
 import androidx.core.app.ActivityCompat
 import com.eric.manager.privacy.annotation.PrivacyOpcode
@@ -444,12 +447,12 @@ object DefaultPrivacyMethodAOP {
         targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
     )
     @JvmStatic
-    fun getPackageInfo(manager: PackageManager,pkg:String, flags: Int): PackageInfo? {
+    fun getPackageInfo(manager: PackageManager, pkg: String, flags: Int): PackageInfo? {
         LogAOP.log("getPackageInfo", "安装包-getPackageInfo")
         if (!PrivacyGuarder.isAgreed()) {
             return null
         }
-        return manager.getPackageInfo(pkg,flags)
+        return manager.getPackageInfo(pkg, flags)
     }
 
     @PrivacyProxyMethod(
@@ -458,12 +461,12 @@ object DefaultPrivacyMethodAOP {
         targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
     )
     @JvmStatic
-    fun getApplicationInfo(manager: PackageManager,pkg:String, flags: Int): ApplicationInfo? {
+    fun getApplicationInfo(manager: PackageManager, pkg: String, flags: Int): ApplicationInfo? {
         LogAOP.log("getApplicationInfo", "安装包-getApplicationInfo")
         if (!PrivacyGuarder.isAgreed()) {
             return null
         }
-        return manager.getApplicationInfo(pkg,flags)
+        return manager.getApplicationInfo(pkg, flags)
     }
 
     @PrivacyProxyMethod(
@@ -837,7 +840,7 @@ object DefaultPrivacyMethodAOP {
     ): Location? {
         LogAOP.log("getLastKnownLocation", "上一次的位置信息")
         if (!PrivacyGuarder.isAgreed()) {
-            // 这里直接写空可能有风险
+            //直接返回null可能存在风险
             return null
         }
         return manager.getLastKnownLocation(provider)
@@ -1056,5 +1059,206 @@ object DefaultPrivacyMethodAOP {
             return value
         }
     }
+
+    @PrivacyProxyMethod(
+        targetClass = OrientationEventListener::class,
+        targetMethod = "enable",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun enable(orientationEventListener: OrientationEventListener) {
+        val key = "OrientationEventListener-enable"
+
+        if (!PrivacyGuarder.isAgreed()) {
+            LogAOP.log(key, "方向监听器-enable")
+            return
+        }
+        LogAOP.log(key, "方向监听器-enable")
+        try {
+            orientationEventListener.enable()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = SensorManager::class,
+        targetMethod = "getDefaultSensor",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun getDefaultSensor(manager: SensorManager, type: Int): Sensor? {
+        val key = "SensorManager-getDefaultSensor-$type"
+
+        if (!PrivacyGuarder.isAgreed()) {
+            LogAOP.log(key, "获取传感器-getDefaultSensor（type=$type）")
+            //直接返回null可能存在风险
+            return null
+        }
+        LogAOP.log(key, "获取传感器-getDefaultSensor（type=$type）")
+        return manager.getDefaultSensor(type)
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = SensorManager::class,
+        targetMethod = "getDefaultSensor",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun getDefaultSensor(manager: SensorManager, type: Int, wakeup: Boolean): Sensor? {
+        val key = "SensorManager-getDefaultSensor-$type-$wakeup"
+        if (!PrivacyGuarder.isAgreed()) {
+            LogAOP.log(key, "获取传感器-getDefaultSensor（type=$type,wakeup=$wakeup）")
+            //直接返回null可能存在风险
+            return null
+        }
+        LogAOP.log(key, "获取传感器-getDefaultSensor（type=$type,wakeup=$wakeup）")
+        return manager.getDefaultSensor(type, wakeup)
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = SensorManager::class,
+        targetMethod = "registerListener",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun registerListener(
+        sensorManager: SensorManager,
+        listener: SensorEventListener, sensor: Sensor,
+        samplingPeriodUs: Int
+    ): Boolean {
+        logSensorManager(sensor)
+        return sensorManager.registerListener(listener, sensor, samplingPeriodUs)
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = SensorManager::class,
+        targetMethod = "registerListener",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun registerListener(
+        sensorManager: SensorManager,
+        listener: SensorEventListener, sensor: Sensor,
+        samplingPeriodUs: Int, maxReportLatencyUs: Int
+    ): Boolean {
+        logSensorManager(sensor)
+        return sensorManager.registerListener(
+            listener,
+            sensor,
+            samplingPeriodUs,
+            maxReportLatencyUs
+        )
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = SensorManager::class,
+        targetMethod = "registerListener",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun registerListener(
+        sensorManager: SensorManager,
+        listener: SensorEventListener, sensor: Sensor,
+        samplingPeriodUs: Int, handler: Handler?
+    ): Boolean {
+        logSensorManager(sensor)
+        return sensorManager.registerListener(listener, sensor, samplingPeriodUs, handler)
+    }
+
+    @PrivacyProxyMethod(
+        targetClass = SensorManager::class,
+        targetMethod = "registerListener",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    @JvmStatic
+    fun registerListener(
+        sensorManager: SensorManager,
+        listener: SensorEventListener?, sensor: Sensor?,
+        samplingPeriodUs: Int, maxReportLatencyUs: Int, handler: Handler?
+    ): Boolean {
+        logSensorManager(sensor)
+        return sensorManager.registerListener(
+            listener,
+            sensor,
+            samplingPeriodUs,
+            maxReportLatencyUs,
+            handler
+        )
+    }
+
+    private fun logSensorManager(sensor: Sensor?) {
+        sensor?.let {
+            var sensorType: String? = ""
+            var sensorDesc: String? = ""
+            when (sensor.type) {
+                Sensor.TYPE_ACCELEROMETER -> {
+                    sensorType = "加速度"
+                    sensorDesc = "常用于摇一摇"
+                }
+                Sensor.TYPE_MAGNETIC_FIELD -> {
+                    sensorType = "磁场"
+                }
+                Sensor.TYPE_ORIENTATION -> {
+                    sensorType = "方向"
+                }
+                Sensor.TYPE_GYROSCOPE -> {
+                    sensorType = "陀螺仪"
+                    sensorDesc = "用来感应手机正面的光线强弱"
+                }
+                Sensor.TYPE_LIGHT -> {
+                    sensorType = "光线 "
+                    sensorDesc = "用来感应手机正面的光线强弱"
+                }
+                Sensor.TYPE_PRESSURE -> {
+                    sensorType = "压力"
+                }
+                Sensor.TYPE_PROXIMITY -> {
+                    sensorType = "距离"
+                }
+                Sensor.TYPE_GRAVITY -> {
+                    sensorType = "重力"
+                }
+                Sensor.TYPE_LINEAR_ACCELERATION -> {
+                    sensorType = "线性加速度"
+                }
+                Sensor.TYPE_ROTATION_VECTOR -> {
+                    sensorType = "旋转矢量"
+                }
+                Sensor.TYPE_RELATIVE_HUMIDITY -> {
+                    sensorType = "相对湿度"
+                }
+                Sensor.TYPE_AMBIENT_TEMPERATURE -> {
+                    sensorType = "环境温度"
+                }
+                Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED -> {
+                    sensorType = "无标定磁场"
+                }
+                Sensor.TYPE_GAME_ROTATION_VECTOR -> {
+                    sensorType = "无标定旋转矢量"
+                }
+                Sensor.TYPE_GYROSCOPE_UNCALIBRATED -> {
+                    sensorType = "未校准陀螺仪"
+                }
+                Sensor.TYPE_SIGNIFICANT_MOTION -> {
+                    sensorType = "特殊动作"
+                }
+                Sensor.TYPE_STEP_DETECTOR -> {
+                    sensorType = "步行检测"
+                }
+                Sensor.TYPE_STEP_COUNTER -> {
+                    sensorType = "步行计数"
+                }
+                Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR -> {
+                    sensorType = "地磁旋转矢量"
+                }
+                Sensor.TYPE_HEART_RATE -> {
+                    sensorType = "心跳速率"
+                }
+            }
+            LogAOP.log("registerListener", "注册-${sensorType}传感器,$sensorDesc")
+        }
+    }
+
 
 }

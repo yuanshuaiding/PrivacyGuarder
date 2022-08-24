@@ -29,7 +29,7 @@ object LogAOP {
             }
             Log.d(
                 "PrivacyGuarderLog",
-                "\n隐私名称：$privacyName\n" + "参数：${argStr}" + "隐私描述：$privacyDesc\n" + "是否同意：$fromCache\n" + "命中缓存：$fromCache\n" + "堆栈：\n${getStackTrace()}"
+                "\n隐私名称：$privacyName\n" + "参数：${argStr}" + "隐私描述：$privacyDesc\n" + "是否同意：${PrivacyGuarder.isAgreed()}\n" + "命中缓存：$fromCache\n" + "堆栈：\n${getStackTrace()}"
             )
         }
     }

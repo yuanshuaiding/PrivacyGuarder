@@ -127,7 +127,7 @@ class PrivacyPlugin : Plugin<Project> {
                 println("${project.name}合规治理插件字节码修改完成")
                 config?.outFile?.let {
                     println("正在生成AOP结果...")
-                    writeResultFile(project, "$it.json").run {
+                    writeResultFile(project, "$it.md").run {
                         println("请在${this}文件中查看AOP结果")
                     }
                 }
@@ -150,12 +150,14 @@ class PrivacyPlugin : Plugin<Project> {
             }
             val gson = GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create()
             val result = """
-隐私属性AOP结果：
+## 隐私属性AOP结果：
+```json
 ${gson.toJson(AOPHelper.aopFieldResultBeans)}
-
-隐私方法AOP结果：
+```
+## 隐私方法AOP结果：
+```json
 ${gson.toJson(AOPHelper.aopMethodResultBeans)}
-
+```
 """
             FileUtils.write(resultFile, result, Charset.forName("UTF-8"))
             return resultFile.absolutePath
