@@ -8,7 +8,7 @@ plugins {
 //隐私治理插件配置
 privacyConfig {
     apply = true
-    ignorePKG = ["com.amap.api"]
+    ignorePKG = []
     outFile='aop'
 }
 

@@ -6,7 +6,7 @@ buildscript {
         sdk_version = "1.6"
     }
     dependencies {
-        classpath 'com.eric.gradle.plugin.privacy:privacyPlugin:1.0'
+        classpath "com.eric.gradle.plugin.privacy:privacyPlugin:$sdk_version"
     }
 }
 
