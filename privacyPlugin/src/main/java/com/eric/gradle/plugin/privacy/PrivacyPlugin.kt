@@ -115,7 +115,7 @@ class PrivacyPlugin : Plugin<Project> {
                 }
                 //设置栈帧计算模式
                 variant.instrumentation.setAsmFramesComputationMode(
-                    FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS
+                    FramesComputationMode.COPY_FRAMES
                 )
 
             }
@@ -127,7 +127,7 @@ class PrivacyPlugin : Plugin<Project> {
                 println("${project.name}合规治理插件字节码修改完成")
                 config?.outFile?.let {
                     println("正在生成AOP结果...")
-                    writeResultFile(project, "$it.md").run {
+                    writeResultFile(project, "${it + "_" + System.currentTimeMillis()}.md").run {
                         println("请在${this}文件中查看AOP结果")
                     }
                 }
@@ -140,7 +140,8 @@ class PrivacyPlugin : Plugin<Project> {
     private fun writeResultFile(project: Project, fileName: String): String {
         if (fileName.isEmpty() || AOPHelper.aopMethodResultBeans.isEmpty()) return ""
         try {
-            val resultFile = File(project.buildDir.absolutePath + File.separator + fileName)
+            val resultFile =
+                File(project.relativePath("privacyGuarder") + File.separator + fileName)
             if (resultFile.parentFile != null && !resultFile.parentFile.exists()) {
                 FileUtils.forceMkdirParent(resultFile)
             }
@@ -160,7 +161,7 @@ ${gson.toJson(AOPHelper.aopMethodResultBeans)}
 ```
 """
             FileUtils.write(resultFile, result, Charset.forName("UTF-8"))
-            return resultFile.absolutePath
+            return project.name + File.separator + resultFile.path
         } catch (e: Exception) {
             e.printStackTrace()
         }

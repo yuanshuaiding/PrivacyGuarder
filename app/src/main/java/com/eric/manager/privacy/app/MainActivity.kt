@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.amap.api.location.AMapLocationClient
 import com.eric.manager.privacy.annotation.TimeCost
 import com.eric.manager.privacy.databinding.ActivityMainBinding
 import com.eric.manager.privacy.databinding.DialogShowValueBinding
@@ -11,13 +12,15 @@ import com.eric.manager.privacyproxy.PrivacyGuarder
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var mActivity: MainActivity
+
     @RequiresApi(Build.VERSION_CODES.O)
     @TimeCost
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        mActivity=this
         binding.btnAgree.setOnClickListener {
             PrivacyGuarder.setAgreement(true)
         }
@@ -31,12 +34,12 @@ class MainActivity : AppCompatActivity() {
             showValue("设备序列号SERIAL", sn)
         }
         binding.btnAndroidId.setOnClickListener {
-            val id = TestInjectJava.getAndroidId(this@MainActivity)
+            val id = TestInjectJava.getAndroidId(mActivity)
             showValue("设备Android ID", id)
         }
 
         binding.btnInstalledPackages.setOnClickListener {
-            val apps = TestInjectJava.getAppsInfo(this)
+            val apps = TestInjectJava.getAppsInfo(mActivity)
             val sb = StringBuilder()
             if (apps.isNullOrEmpty()) {
                 sb.append("未获取到应用列表")
@@ -51,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnInstalledPackages2.setOnClickListener {
-            val apps = TestInjectJava.getAppsInfo(this)
+            val apps = TestInjectJava.getAppsInfo(mActivity)
             val sb = StringBuilder()
             if (apps.isNullOrEmpty()) {
                 sb.append("未获取到应用列表")
@@ -62,6 +65,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             showValue("应用列表", sb.toString())
+        }
+
+
+
+
+        binding.btnTestAmap.setOnClickListener {
+            //2D版隐私
+            AMapLocationClient.updatePrivacyShow(mActivity, true, true)
+            AMapLocationClient.updatePrivacyAgree(mActivity, true)
         }
 
     }

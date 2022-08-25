@@ -23,6 +23,24 @@ android {
         versionName "1.0"
         flavorDimensions.add("app")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 通用的manifestPlaceholders
+        manifestPlaceholders = [
+                JPUSH_PKGNAME : "com.bertadata.qxb",
+                JPUSH_APPKEY  : "9113ea0e886a0cbd70f8f4d5",             // JPush上注册的包名对应的appKey.
+                JPUSH_CHANNEL : "developer-default",                    // 暂时填写默认值即可.
+                qqappid       : "1104746783",                           // 友盟分享中QQ分享所需key.
+                XIAOMI_APPID  : "MI-2882303761517383381",               // 小米平台注册的appid
+                XIAOMI_APPKEY : "MI-5151738338381",                     // 小米平台注册的appkey
+                HUAWEI_APPID  : "appid=10345844",                       // 华为平台注册的appid
+                MEIZU_APPKEY  : "MZ-8f42ccd73d784b1783b15dd4d14c55ac",  // 魅族平台注册的appkey
+                MEIZU_APPID   : "MZ-122601",                            // 魅族平台注册的appid
+                VIVO_APPKEY   : "5e23786e-e783-4fc0-a9e3-43dba9e3f70f", // VIVO平台注册的appkey
+                VIVO_APPID    : "14028",                                // VIVO平台注册的appid
+                OPPO_APPKEY   : "OP-86ww3OZt1hk408sGKO8gO4kg0",         // OPPO平台注册的appkey
+                OPPO_APPID    : "OP-2239728",                           // OPPO平台注册的appid
+                OPPO_APPSECRET: "OP-75436b75f33Dd92775d97bC8E728c8bA"   // OPPO平台注册的appSecret
+        ]
     }
 
     signingConfigs {
@@ -67,6 +85,12 @@ android {
         jvmTarget = '1.8'
     }
 
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
     buildFeatures {
         //项目使用viewBinding
         viewBinding true
@@ -78,7 +102,8 @@ android {
 }
 
 dependencies {
-
+    implementation fileTree(include: ['*.?ar'], dir: 'libs')
+    implementation files('libs/AMap2DMap_6.0.0_AMapSearch_9.2.0_AMapLocation_6.1.0_20220414.jar')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.5.0'
@@ -86,8 +111,18 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation project(path: ':privacyAnnotation')
     implementation project(path: ':privacyProxy')
-    //TODO 测试用：友盟SDK隐私API调用
-
+    //测试用：友盟SDK隐私API调用START
+    implementation 'com.umeng.umsdk:common:9.5.0'//必选
+    implementation 'com.umeng.umsdk:asms:1.6.3'//必选
+    // 友盟分享组件(QQ、微信和微博平台在分享7.1.4SDK及以上版本,除了集成友盟官方依赖库，还需要额外集成QQ、微信和微博的官方SDK依赖库)
+    implementation 'com.umeng.umsdk:share-core:7.1.9'//分享核心库，必选
+    implementation 'com.umeng.umsdk:share-qq:7.1.9'
+    //QQ官方依赖库(目前只支持离线引入jar包)
+    implementation files('libs/open_sdk_3.5.11.6_r13b47b7_lite.jar')
+    implementation 'com.squareup.okhttp3:okhttp:3.12.12'//QQ SDK在3.53.0版本及以上时需要集成okhttp官方依赖库，必选
+    implementation 'com.umeng.umsdk:share-wx:7.1.9'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:6.8.0'//微信官方依赖库，必选
+    //测试用：友盟SDK隐私API调用END
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
