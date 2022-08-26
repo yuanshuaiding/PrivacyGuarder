@@ -775,22 +775,6 @@ object DefaultPrivacyMethodAOP {
         return manager.scanResults
     }
 
-
-    @JvmStatic
-    @PrivacyProxyMethod(
-        targetClass = SensorManager::class,
-        targetMethod = "getSensorList",
-        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
-    )
-    fun getSensorList(manager: SensorManager, type: Int): List<Sensor>? {
-        LogAOP.log("getSensorList", "可用传感器")
-        if (!PrivacyGuarder.isAgreed()) {
-            return emptyList()
-        }
-        return manager.getSensorList(type)
-    }
-
-
     /**
      * DHCP信息
      */
@@ -1101,12 +1085,12 @@ object DefaultPrivacyMethodAOP {
         return manager.getDefaultSensor(type)
     }
 
+    @JvmStatic
     @PrivacyProxyMethod(
         targetClass = SensorManager::class,
         targetMethod = "getDefaultSensor",
         targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
     )
-    @JvmStatic
     fun getDefaultSensor(manager: SensorManager, type: Int, wakeup: Boolean): Sensor? {
         val key = "SensorManager-getDefaultSensor-$type-$wakeup"
         if (!PrivacyGuarder.isAgreed()) {
@@ -1118,6 +1102,20 @@ object DefaultPrivacyMethodAOP {
         return manager.getDefaultSensor(type, wakeup)
     }
 
+    @JvmStatic
+    @PrivacyProxyMethod(
+        targetClass = SensorManager::class,
+        targetMethod = "getSensorList",
+        targetMethodOpcode = PrivacyOpcode.INVOKEVIRTUAL
+    )
+    fun getSensorList(manager: SensorManager, type: Int): List<Sensor>? {
+        LogAOP.log("getSensorList", "可用传感器（$type）")
+        if (!PrivacyGuarder.isAgreed()) {
+            return emptyList()
+        }
+        return manager.getSensorList(type)
+    }
+
     @PrivacyProxyMethod(
         targetClass = SensorManager::class,
         targetMethod = "registerListener",
@@ -1126,7 +1124,8 @@ object DefaultPrivacyMethodAOP {
     @JvmStatic
     fun registerListener(
         sensorManager: SensorManager,
-        listener: SensorEventListener, sensor: Sensor,
+        listener: SensorEventListener,
+        sensor: Sensor,
         samplingPeriodUs: Int
     ): Boolean {
         logSensorManager(sensor)

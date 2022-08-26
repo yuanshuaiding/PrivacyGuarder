@@ -1,5 +1,7 @@
 package com.eric.manager.privacy.app
 
+import android.content.Context
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
@@ -72,8 +74,25 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnTestAmap.setOnClickListener {
             //2D版隐私
-            AMapLocationClient.updatePrivacyShow(mActivity, true, true)
-            AMapLocationClient.updatePrivacyAgree(mActivity, true)
+            try {
+                val sensorManager: SensorManager =
+                    mActivity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+                try {
+                    val b = sensorManager.getDefaultSensor(6)
+                } catch (th: Throwable) {
+                }
+                try {
+                    val c = sensorManager.getDefaultSensor(11)
+                } catch (th2: Throwable) {
+                }
+                try {
+                    val d = sensorManager.getDefaultSensor(1)
+                } catch (th3: Throwable) {
+                }
+            } catch (th4: Throwable) {
+
+            }
         }
 
     }
